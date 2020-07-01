@@ -24,7 +24,7 @@ OUTPUTPATH = os.path.join(CHECK_IMG, "output")
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r@4w!349tumt2ikd$iuq-w1t+&92$t74vcczq1=^flt8x&gjtd'
+SECRET_KEY = 'SECRET KEY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
