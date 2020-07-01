@@ -1,4 +1,4 @@
-# tollbooth-management-system
+# Tollbooth Management System
 
 TollBooth Management System, is a web application, developed by using python django. This enables customers to book toll, whenever they needed. There are 3 users, who can access this site.
 
