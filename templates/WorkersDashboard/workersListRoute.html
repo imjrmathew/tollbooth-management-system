@@ -1,0 +1,63 @@
+{% extends "WorkersDashboard/workersBase.html" %}
+{% block body_block %}
+{% load static %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'WorkersDashboard:workersIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Route</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Routes</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Route Name</th>
+                                                <th>Source Location</th>
+                                                <th>Source District</th>
+                                                <th>Destination Location</th>
+                                                <th>Destination District</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in routeobj %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.RouteName }}</td>
+                                                <td>{{ i.SourceLoc.CityName }}</td>
+                                                <td>{{ i.SourceLoc.DistrictId.DistrictName }}</td>
+                                                <td>{{ i.DestinationLoc.CityName }}</td>
+                                                <td>{{ i.DestinationLoc.DistrictId.DistrictName }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "AdminDashboard/adminbase.html" %}
+{% block body_block %}
+{% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'AdminDashboard:adminindex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Vehicle Type</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Vehicle Type   <small style="color: #ff6267; font-weight: 500; margin-left: 20px; font-size: small;" >{{novehicle}}</small></h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Vehicle Type</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in vehicleobj %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.VehicleType }}</td>
+                                                <td><button type="submit" class="btn btn-dark"  data-toggle="modal" data-target="#editvehicle" onclick="editVehiclenow({{ i.id }})" >Edit</button> </td>
+                                                <td><button type="submit" class="btn btn-dark" onclick="window.location.href='{% url 'AdminDashboard:adminDeleteVehicleType' i.id %}'">Delete</button> </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Add Vehicle Type</h4>
+                                <div class="basic-form">
+                                    <form method="post" action ="{% url 'AdminDashboard:adminaddvehicletype' %}">
+                                        {% csrf_token %}
+                                            <div class="form-group col-md-12">
+                                                <label>Vehicle Type</label>
+                                                <input type="text" class="form-control input-rounded" name="vehtype" placeholder="Add Type" required>
+                                            </div>
+                                        <button type="submit" class="btn btn-dark">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="modal fade bd-example-modal-sm" id="editvehicle" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Vehicle Type</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <form method="post" id="formvehiclesubmit">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="id" id="editvehicleid" value="">
+                                                    <input type="text" name="vname" id="editvname"  placeholder="Location" value="" class="form-control input-rounded" required>
+                                                    <br>
+                                                        <br>
+                                                        <br>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-dark">Submit</button>
+                                                    </div>
+                                                 </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+    <script>
+    function editVehiclenow(id) {
+        $.ajax({
+            url: '/admindash/EditVehicleTypes/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                vid = data['Id'];
+                vname = data['VehicleType'];
+                $("#editvehicle").modal('show');
+                $("#editvehicleid").val(vid);
+                $("#editvname").val(vname);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    $(document).on('submit', '#formvehiclesubmit',function(e){
+    $.ajax({
+        type:'POST',
+        url:'{% url 'AdminDashboard:adminUpdateVehicleType' %}',
+        data:{
+            id:$("#editvehicleid").val(),
+            VehicleType:$("#editvname").val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            action: 'post'
+        },
+        success:function(message){
+            if(message['error']) {
+                $("#editvehicle").modal('hide');
+                location.reload();
+            }
+        }
+    });
+    });
+
+    </script>
+{% endblock %}

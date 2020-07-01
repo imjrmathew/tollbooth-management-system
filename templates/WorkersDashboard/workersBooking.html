@@ -1,0 +1,73 @@
+{% extends 'WorkersDashboard/workersBase.html' %}
+{% block body_block %}
+{% load static %}
+    <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'WorkersDashboard:workersIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Booking</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Booking History</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                                                                <thead >
+                                            <tr>
+                                                <th>#</th>
+                                                <th>First Name</th>
+                                                <th>Mobile</th>
+                                                <th>Email</th>
+                                                <th>Register No</th>
+                                                <th>TollBooth</th>
+                                                <th>Amount</th>
+                                                <th>Booked On</th>
+                                                <th>Expired On</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in bookobj %}
+                                            <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            {% for j in newuserobj %}
+                                            {% if i.loginid == j.loginid %}
+                                            <td>{{ j.FirstName }}</td>
+                                            <td>{{j.Phone }}</td>
+                                            <td>{{ j.Email }}</td>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <td>{{ i.VehicleID.VehicleRegNum }}</td>
+                                            <td>{{ i.TollID.TollName }}</td>
+                                            <td>{{ i.AmountID.Amount }}</td>
+                                            <td>{{ i.DateBooked }} {{ i.TimeBooked }}</td>
+                                            <td>{{ i.DateExpired }} {{ i.TimeExpired }}</td>
+                                                {% if i.isExpired == True and i.isCanceled == False and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-danger" style="font-weight: bold;">Expired</td>
+                                                {% elif i.isExpired == False and i.isCanceled == False and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-info" style="font-weight: bold;">Active</td>
+                                                {% elif i.isCanceled == True and i.isExpired == True and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-danger" style="font-weight: bold;">Canceled</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+{% endblock %}

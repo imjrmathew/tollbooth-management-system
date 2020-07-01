@@ -1,0 +1,197 @@
+{% extends "CustomerDashboard/customerBase.html" %}
+{% block body_block %}
+{% load static %}
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'CustomerDashboard:CustomerIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Booking</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Book Now</h4>
+                                <div class="basic-form">
+                                    <form method="POST" action ="{% url 'CustomerDashboard:Booking' %}">
+                                        {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Name</label>
+                                            <input disabled type="text" class="form-control input-rounded" name="firstname" placeholder="Name" value="{{ details.FirstName }}"  required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Phone</label>
+                                            <input disabled type="text" class="form-control input-rounded" name="mobile" placeholder="Mobile" value="{{ details.Phone }}"  required>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Register No</label>
+                                        <select name="registerno" required class="form-control input-rounded" id="regme" onchange="getVtype()">
+                                            <option disabled selected value>--select--</option>
+                                            {% for i in regdetails %}
+                                              <option id="{{ i.id }}" value="{{ i.VehicleRegNum }}">{{ i.VehicleRegNum }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                    <input type="hidden" name="meid" id="idme" value="">
+                                    <input type="hidden" name="mevtid" id="idvtme" value="">
+                                        <label>Vehicle Type</label>
+                                        <select name="vtype" required class="form-control input-rounded" disabled id="vtypeme">
+                                            <option disabled selected value>--select--</option>
+                                            {% for i in vehdetails %}
+                                              <option value="{{ i.VehicleType }}" >{{ i.VehicleType }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Toll Booth</label>
+                                        <select name="tollname" required class="form-control input-rounded" id="tolltype" onchange="getTolltype()">
+                                            <option disabled selected value>--select--</option>
+                                            {% for i in toll %}
+                                              <option id="{{ i.id }} "value="{{ i.TollName }}" >{{ i.TollName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                    <input type="hidden" name="mtid" id="tidme" value="">
+                                    <input type="hidden" name="merouteid" id="routeidme" value="">
+                                        <label>Source Location</label>
+                                        <select name="sloc" required class="form-control input-rounded" disabled id="slocme">
+                                            <option disabled selected value>--select--</option>
+                                            {% for i in location %}
+                                              <option value="{{ i.RouteID.SourceLoc.CityName }}">{{ i.RouteID.SourceLoc.CityName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Destination Location</label>
+                                        <select  name="dloc" required class="form-control input-rounded" id="dlocme" disabled>
+                                            <option disabled selected value>--select--</option>
+                                            {% for i in location %}
+                                              <option value="{{ i.RouteID.DestinationLoc.CityName }}" >{{ i.RouteID.DestinationLoc.CityName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Amount</label>
+                                        <input disabled type="text" class="form-control input-rounded" name="amounts" id="amnt" placeholder="0.00" value=""  required>
+                                        <small id="visible" hidden style="font-weight: bold;color:rgba(220,65,59,0.85)"></small>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Booked On</label>
+                                        <input type="date" class="form-control input-rounded" name="datebooked" id="dtbk" placeholder="DD/MM/YYYY" value=""  min='{{ dates }}' required onchange="getExpiryDate()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="hidden" name="menowdate" id="nowdateme" value="">
+                                        <input type="hidden" name="menowexdate" id="nowexdateme" value="">
+                                        <label>Expired On</label>
+                                        <input disabled type="date" class="form-control input-rounded" name="dateexpired" id="dtexp" value="" required>
+                                    </div>
+                                    </div>
+
+                                    <br>
+                                    <hr>
+                                        <button type="submit" class="btn btn-dark btn-rounded pull-right" style="width:300px;"><span class="fa fa-plus" style="padding-right: 10px;"> </span>Book Now</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+    function getVtype() {
+        var id = $("#regme").children(":selected").attr("id");
+        $.ajax({
+            url: '/Customers/GetRegValue/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                vid = data['Id'];
+                vtid = data['tid'];
+                vtype = data['VehicleType'];
+                $("#idme").val(vid);
+                $("#idvtme").val(vtid);
+                $("#vtypeme").val(vtype);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    function getTolltype() {
+        var ids = $("#tolltype").children(":selected").attr("id");
+        var vid = $("#idvtme").val();
+        var values = [ids, vid];
+        var jsontext = JSON.stringify(values);
+        $.ajax({
+            url: '/Customers/GetTollValue/'+jsontext,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                tid = data['Id'];
+                routeid = data['routeid'];
+                SourceLoc = data['SourceLoc'];
+                DestinationLoc = data['DestinationLoc'];
+                Amount = data['Amount'];
+                $("#tidme").val(tid);
+                $("#routeidme").val(routeid);
+                $("#slocme").val(SourceLoc);
+                $("#dlocme").val(DestinationLoc);
+                $("#amnt").val(Amount);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    function getExpiryDate() {
+        var date = $("#dtbk").val();
+        var jsontext = JSON.stringify(date)
+        $.ajax({
+            url: '/Customers/GetExpiry/'+jsontext,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                currentdate = data['currentdate'];
+                expirydate = data['expirydate'];
+                $("#nowdateme").val(currentdate);
+                $("#nowexdateme").val(expirydate);
+                $("#dtexp").val(expirydate);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+    </script>
+
+{% endblock %}

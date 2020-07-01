@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Welcome | {{ logindetails.username }}</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'customer/images/favicon.png' %}">
+    <!-- Pignose Calender -->
+    <link href="{% static 'customer/plugins/pg-calendar/css/pignose.calendar.min.css' %}" rel="stylesheet">
+    <!-- Chartist -->
+    <link rel="stylesheet" href="{% static 'customer/plugins/chartist/css/chartist.min.css' %}">
+    <link rel="stylesheet" href="{% static 'customer/plugins/chartist-plugin-tooltips/css/chartist-plugin-tooltip.css' %}">
+    <link href="{% static 'customer/plugins/tables/css/datatable/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9e9d15e133.js" crossorigin="anonymous"></script>
+    <!-- Custom Stylesheet -->
+    <link href="{% static 'customer/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'customer/icons/fontawesome-free-5.12.1-web/css/all.min.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <div class="brand-logo">
+                <a href="{% url 'CustomerDashboard:CustomerIndex' %}">
+                    <b class="logo-abbr"><span style="font-size: 25px; color: white; font-weight: bold">TB</span> </b>
+                    <span class="logo-compact" style="font-weight: bold; color: white; font-size: 30px;">TBOOTH</span>
+                    <span class="brand-title" style="font-weight: bold; color: white; font-size: 30px;">
+                        TBOOTH
+                    </span>
+                </a>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+
+        <div class="header">
+            <div class="header-content clearfix">
+
+                <div class="nav-control">
+                    <div class="hamburger">
+                        <span class="toggle-icon"><i class="icon-menu"></i></span>
+                    </div>
+
+                </div>
+                <div class="header-left">
+                    <div class="input-group icons">
+                        <h2 style="color:rgba(14,13,12,0.93)">Welcome, {{ logindetails.username }}</h2>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <ul class="clearfix">
+                        <li class="icons dropdown">
+                            <div class="user-img c-pointer position-relative"   data-toggle="dropdown">
+                                <span class="activity active"></span>
+                                <img src="{{ userdetails.Image.url }}" height="40" width="40" alt="">
+                            </div>
+                            <div class="drop-down dropdown-profile animated fadeIn dropdown-menu">
+                                <div class="dropdown-content-body">
+                                    <ul>
+                                        <li>
+                                            <a href="{% url 'CustomerDashboard:CustomerUpdateProfile' %}"><i class="fas fa-user-secret"></i> <span>Profile</span></a>
+                                        </li>
+
+                                        <hr class="my-2">
+                                        <li><a href="{% url 'logout' %}"><i class="fas fa-power-off"></i> <span>Logout</span></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% include 'CustomerDashboard/messages.html' %}
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="nk-sidebar">
+            <div class="nk-nav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li class="nav-label">Dashboard</li>
+                    <li>
+                        <a href="{% url 'CustomerDashboard:CustomerIndex' %}" aria-expanded="false">
+                            <i class="fab fa-dashcube menu-icon"></i><span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'CustomerDashboard:ListVehicleReg' %}" aria-expanded="false">
+                            <i class="fas fa-location-arrow menu-icon"></i><span class="nav-text">Add Vehicle Details</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'CustomerDashboard:Booking' %}" aria-expanded="false">
+                            <i class="fas fa-torii-gate menu-icon"></i><span class="nav-text">Booking</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'CustomerDashboard:ListBooking' %}" aria-expanded="false">
+                            <i class="fas fa-history menu-icon"></i><span class="nav-text">Booking History</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% block body_block %}
+
+
+        {% endblock %}
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright &copy; Designed & Developed by dN</p>
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="preloader">
+        <div class="loader">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10" />
+            </svg>
+        </div>
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <script src="{% static 'customer/plugins/common/common.min.js' %}"></script>
+    <script src="{% static 'customer/js/custom.min.js' %}"></script>
+    <script src="{% static 'customer/js/settings.js' %}"></script>
+    <script src="{% static 'customer/js/gleek.js' %}"></script>
+    <script src="{% static 'customer/js/styleSwitcher.js' %}"></script>
+
+    <!-- Chartjs -->
+    <script src="{% static 'customer/plugins/chart.js/Chart.bundle.min.js' %}"></script>
+    <!-- Circle progress -->
+    <script src="{% static 'customer/plugins/circle-progress/circle-progress.min.js' %}"></script>
+    <!-- Datamap -->
+    <script src="{% static 'customer/plugins/d3v3/index.js' %}"></script>
+    <script src="{% static 'customer/plugins/topojson/topojson.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/datamaps/datamaps.world.min.js' %}"></script>
+    <!-- Morrisjs -->
+    <script src="{% static 'customer/plugins/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/morris/morris.min.js' %}"></script>
+    <!-- Pignose Calender -->
+    <script src="{% static 'customer/plugins/moment/moment.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/pg-calendar/js/pignose.calendar.min.js' %}"></script>
+    <!-- ChartistJS -->
+    <script src="{% static 'customer/plugins/chartist/js/chartist.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/chartist-plugin-tooltips/js/chartist-plugin-tooltip.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/tables/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/tables/js/datatable/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'customer/plugins/tables/js/datatable-init/datatable-basic.min.js' %}"></script>
+
+
+    <script src="{% static 'customer/js/dashboard/dashboard-1.js' %}"></script>
+
+    <script>
+        setTimeout(function () {
+        if($("#msg").length > 0) {
+            $("#msg").remove();
+        }
+        }, 4000)
+    </script>
+</body>
+</html>

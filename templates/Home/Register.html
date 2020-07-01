@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends "Home/base2.html" %}
+{% block body_block %}
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+    <div class="page-links">
+        <a href="/login">Login</a><a href="/register" class="active">Register</a><a href="/">Home</a>
+    </div>
+    <h6 class="errorlist">{{ number }}</h6>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formL }}
+    {{ formR }}
+
+    <div class="form-button">
+        <button id="submit" type="submit" class="ibtn">Register</button>
+    </div>
+</form>
+<div class="other-links">
+    <span>Or register with</span><a href="{% provider_login_url "google" %}">Google</a>
+</div>
+{% endblock %}

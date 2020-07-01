@@ -1,0 +1,163 @@
+{% extends "CustomerDashboard/customerBase.html" %}
+{% block body_block %}
+{% load static %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'CustomerDashboard:CustomerIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Route</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Vehicles</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Register Number</th>
+                                                <th>Vehicle Type</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in vehdetails %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.VehicleRegNum }}</td>
+                                                <td>{{ i.VehicleTypeID.VehicleType }}</td>
+                                                <td><button type="submit" class="btn btn-facebook"  data-toggle="modal" data-target="#editvehicle" onclick="editVehicleNow({{ i.id }})" ><span class="fas fa-edit"></span></button> </td>
+                                                <td><button type="submit" class="btn btn-reddit" onclick="window.location.href='{% url 'CustomerDashboard:DeleteVehicleReg' i.id %}'"><span class="fas fa-trash"></span></button> </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Add Vehicle</h4>
+                                <div class="basic-form">
+                                    <form method="POST" action ="{% url 'CustomerDashboard:AddVehicleReg' %}">
+                                        {% csrf_token %}
+                                                <label>Name</label>
+                                                <input disabled type="text" class="form-control input-rounded" name="firstname" placeholder="Name" value="{{ details.FirstName }}"  required>
+                                    <br>
+                                                <label>Phone</label>
+                                                <input disabled type="text" class="form-control input-rounded" name="mobile" placeholder="Mobile" value="{{ details.Phone }}"  required>
+                                    <br>
+                                                <label>Category</label>
+                                                <select name="category" required class="form-control input-rounded">
+                                                <option disabled selected value>--select--</option>
+                                                    {% for i in category %}
+                                                      <option value="{{ i.VehicleType }}">{{ i.VehicleType }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                    <br>
+                                                <label>Register Number</label>
+                                                <input type="text" class="form-control input-rounded" name="regnum" placeholder="Eg: KL-79A-7929" required>
+                                    <br>
+                                        <button type="submit" class="btn btn-dark pull-right"><span class="fa fa-plus" style="padding-right: 10px;"> </span>Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="modal fade bd-example-modal-sm" id="editvehicle" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header" style="background-color: #3b5998;">
+                                                    <h5 class="modal-title" style="color: white;">Update Vehicle</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"><span style="color: white;">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <form method="post" id="formvehiclesubmit">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="editveh" id="editvehid" value="">
+                                                    <select name="type" id="category" required class="form-control input-rounded">
+                                                    {% for i in category %}
+                                                      <option value="{{ i.VehicleType }}">{{ i.VehicleType }}</option>
+                                                    {% endfor %}
+                                                    </select>
+                                                    <br>
+                                                    <input type="text" name="editreg" id="editregname"  placeholder="Register Number" value="" class="form-control input-rounded" required>
+                                                        <br>
+                                                        <br>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-facebook"><span class="fas fa-check" style="padding-right: 10px;"></span>Update</button>
+                                                    </div>
+                                                 </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+    <script>
+    function editVehicleNow(id) {
+        $.ajax({
+            url: '/Customers/EditVehicleReg/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                vid = data['Id'];
+                vtype = data['VehicleType'];
+                vname = data['VehicleReg'];
+                $("#editvehicle").modal('show');
+                $("#editvehid").val(vid);
+                $("#category").val(vtype);
+                $("#editregname").val(vname);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    $(document).on('submit', '#formvehiclesubmit',function(e){
+    $.ajax({
+        type:'POST',
+        url:'{% url 'CustomerDashboard:UpdateVehicleReg' %}',
+        data:{
+            id:$("#editvehid").val(),
+            VehicleType:$("#category").val(),
+            VehicleReg:$("#editregname").val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            action: 'post'
+        },
+        success:function(message){
+            if(message['error']) {
+                $("#editvehicle").modal('hide');
+                location.reload();
+            }
+        }
+    });
+    });
+
+    </script>
+
+{% endblock %}

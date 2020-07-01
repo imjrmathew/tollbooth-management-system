@@ -1,0 +1,80 @@
+{% extends 'WorkersDashboard/workersBase.html' %}
+{% block body_block %}
+{% load static %}
+    <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'WorkersDashboard:workersIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Check</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+           <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <h4 class="card-title">Check Status <span  style="padding-left: 10px; color: #28a745;"><strong id="myhead"></strong></span></h4>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <button type="button" id="capture" class="btn btn-dark pull-right"><span class="fas fa-camera" style="padding-right: 10px;"></span>Capture</button>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6 card" style="padding:50px;">
+                                        <video id="video" width="100%" height=auto style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"></video>
+                                    </div>
+                                    <div class="col-md-6 card" style="padding:50px;">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <canvas id="canvas" width="470" height="370" style="-webkit-transform: scaleX(-1); transform: scaleX(-1);"></canvas>
+                                            <textarea name="value" id="value" hidden></textarea>
+                                            <button type="submit" name="btn" id="btn" hidden></button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Register Number</th>
+                                                <th>Name</th>
+                                                <th>Vehicle Type</th>
+                                                <th>TollBooth</th>
+                                                <th>Date Booked</th>
+                                                <th>Date Expired</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in booking %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.VehicleID.VehicleRegNum }}</td>
+                                                <td>{{ i.loginid.username }}</td>
+                                                <td>{{ i.VehicleID.VehicleTypeID.VehicleType }}</td>
+                                                <td>{{ i.TollID.TollName }}</td>
+                                                <td>{{ i.DateBooked }}</td>
+                                                <td>{{ i.DateExpired }}</td>
+                                                <td class="text-info"><strong>Active</strong></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="{% static 'workers/js/photo.js' %}"></script>
+{% endblock %}

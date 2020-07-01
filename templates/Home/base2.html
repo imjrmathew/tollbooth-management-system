@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication | TollBooth</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'log/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'log/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'log/iofrm-style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'log/iofrm-theme6.css' %}">
+    <style>
+        .errorlist {
+            color: #ff6267;
+            font-weight: bold;
+        }
+        form input[type=text]:hover, input[type=password]:hover {
+            color: #262626;
+        }
+        form input[type=text]:focus {
+            color: #262626;
+        }
+        form input[type=password]:focus {
+            color: #262626;
+        }
+        form input[type=text], input[type=password] {
+            color: #262626;
+            font-weight: bold;
+        }
+        form textarea {
+            color: #262626;
+            font-weight: bold;
+        }
+        form textarea:hover {
+            color: #262626;
+        }
+        form select{
+            color: #262626;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        form select:hover{
+            color: #262626;
+        }
+        form option{
+            color: #262626;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        form option:hover{
+            color: #262626;
+        }
+        input[type=file]::-webkit-file-upload-button {
+        border: none;
+        box-shadow: none;
+        outline: none;
+        display: inline-block;
+        padding: 5px 10px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1.428571429;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border-radius: 4px;
+        color: #ffffff;
+        background-color: #9151f4;
+        border:2px solid #9151f4;
+        outline:none;
+        transition:.5s;
+    }
+
+     input[type=file]::-webkit-file-upload-button:hover {
+            background-color:white;
+            color:#9151f4;
+            border:2px solid #9151f4;
+        }
+
+    input[type=file] {
+        font-weight: bold;
+        color: #262626;
+    }
+    input[type=file]:hover {
+        color: #262626;
+    }
+    </style>
+</head>
+<body>
+    <div class="form-body">
+        <div class="website-logo">
+            <a href="/">
+                <div class="logo">
+                    <img class="logo-size" src="{% static 'log/logo-light.svg' %}" alt="Failed">
+                </div>
+            </a>
+        </div>
+        <div class="row">
+
+            <div class="img-holder">
+                <div class="bg"></div>
+                <div class="info-holder">
+                    <img src="{% static 'log/graphic2.svg' %}" alt="">
+                </div>
+            </div>
+            <div class="form-holder">
+                <div class="form-content">
+                    <div class="form-items">
+                        <h3>Get more things done with Loggin platform.</h3>
+                        <p>Access to the most powerfull tool in the entire design and web industry.</p>
+   {% block body_block %}
+
+
+    {% endblock %}
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="{% static 'log/jquery.min.js.download' %}"></script>
+<script src="{% static 'log/popper.min.js.download' %}"></script>
+<script src="{% static 'log/bootstrap.min.js.download' %}"></script>
+<script src="{% static 'log/main.js.download' %}"></script>
+
+</body></html>

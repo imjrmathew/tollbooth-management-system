@@ -1,0 +1,175 @@
+{% extends 'WorkersDashboard/workersBase.html' %}
+{% block body_block %}
+{% load static %}
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+  <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'WorkersDashboard:workersIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Profile</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="media align-items-center mb-4">
+                                    <img class="mr-3" src="{{ userdetails.Image.url }}" width="100" height="100" alt="" style="border-radius: 50%">
+                                    <div class="media-body">
+                                        <h3 class="mb-0">{{ userdetails.FirstName }}</h3>
+                                        <p class="text-muted mb-0">{{ userdetails.Address }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-5">
+                                    <div class="col">
+                                        <div class="card card-profile text-center">
+                                            <span class="mb-1 text-primary"><i class="icon-people"></i></span>
+                                            <h3 class="mb-0">263</h3>
+                                            <p class="text-muted px-4">Following</p>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="card card-profile text-center">
+                                            <span class="mb-1 text-warning"><i class="icon-user-follow"></i></span>
+                                            <h3 class="mb-0">263</h3>
+                                            <p class="text-muted">Followers</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <strong class="text-dark mr-4">Name: </strong><span>{{ userdetails.FirstName }},{{ userdetails.LastName }}</span>
+                                    </div>
+                                </div>
+
+                                <h4>About Me</h4>
+                                <p class="text-muted">Hi, I'm {{ userdetails.FirstName }}</p>
+                                <ul class="card-profile__info">
+                                    <li class="mb-1"><strong class="text-dark mr-4">Mobile</strong> <span>{{ userdetails.Phone }}</span></li>
+                                    <li><strong class="text-dark mr-4">Email</strong> <span>{{ userdetails.Email }}</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Update Profile</h4>
+                                <div class="basic-form">
+                                    <form method="post" action ="{% url 'WorkersDashboard:workersUpdateProfile' %}">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label>Username</label>
+                                                <div class="input-group">
+                                                <input type="text" class="form-control input-rounded" name="username" value="{{ logindetails.username }}" placeholder="Username" required aria-describedby="changepwd2">
+                                                <div class="input-group-append">
+                                                <button class="btn btn-dark input-rounded" type="button" id="changepwd2" data-toggle="modal" data-target="#editpassword">Change Password</button>
+                                              </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label>First Name</label>
+                                                <input type="text" class="form-control input-rounded" name="firstname" value="{{ userdetails.FirstName }}" placeholder="First Name" required>
+                                            </div>
+                                             <div class="form-group col-md-6">
+                                                <label>Last Name</label>
+                                                <input type="text" class="form-control input-rounded" name="lastname" value="{{ userdetails.LastName }}" placeholder="Last Name" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                         <div class="form-group col-md-12">
+                                                <label>Address</label>
+                                             <textarea class="form-control input-rounded" name="address" placeholder="Address" required rows="3" cols="3">{{ userdetails.Address }}</textarea>
+                                            </div>
+
+                                            </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control input-rounded" name="email" value="{{ userdetails.Email }}" placeholder="Email" required>
+                                            </div>
+                                             <div class="form-group col-md-6">
+                                                <label>Mobile</label>
+                                                <input type="text" maxlength="12" class="form-control input-rounded" name="mobile" value="{{ userdetails.Phone }}" placeholder="Mobile No" required>
+                                                <small style="color: #ff6267; font-weight: 500; margin-left: 20px;" >{{number}}</small>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-dark">Update</button>
+                                        <button type="button" class="btn btn-reddit " style="width:10%" data-toggle="modal" data-target="#deleteaccount">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div></div>
+
+
+
+    <div class="modal fade bd-example-modal-sm" id="editpassword" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Change Password</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <form method="post" action="{% url 'WorkersDashboard:workersChangePassword' %}">
+                                                    {% csrf_token %}
+                                                    <input type="password" name="newpassword"  placeholder="Password" class="form-control input-rounded" required>
+                                                        <br>
+                                                        <br>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-dark">Change</button>
+                                                    </div>
+                                                </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+        <div class="modal fade bd-example-modal-sm" id="deleteaccount" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Account Deletion</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <form method="post" action="{% url 'WorkersDashboard:workersDeleteAccount' %}">
+                                                    {% csrf_token %}
+                                                    <span>
+                                                        <img src="{% static 'workers/icons/wizard.svg' %}" style="height: 50%; width:50%; margin-left: 20%; " >
+                                                    </span>
+                                                    <br>
+                                                    <br>
+                                                    <label style="margin-left: 20%; font-weight: bold; color: rgba(0,0,0,0.85)">Do you want to delete ?</label>
+                                                    <br>
+                                                    <br>
+                                                    <div class="modal-footer" style="margin-bottom: -5px" >
+                                                        <button type="submit" class="btn btn-reddit">Delete</button>
+                                                    </div>
+                                                </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+{% endblock %}

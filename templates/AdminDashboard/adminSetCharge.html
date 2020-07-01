@@ -1,0 +1,178 @@
+{% extends "AdminDashboard/adminbase.html" %}
+{% block body_block %}
+{% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+    .form-control:hover {
+        border-color: #0c0c0c;
+        border-width: 2px;
+        transition: 2s;
+    }
+    </style>
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'AdminDashboard:adminindex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Set Charges</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Amount   <small style="color: #ff6267; font-weight: 500; margin-left: 20px; font-size: small;" >{{nocharge}}</small></h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>TollBooth</th>
+                                                <th>Route</th>
+                                                <th>Vehicle Type</th>
+                                                <th>Amount</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in charge %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.TollID.TollName }}</td>
+                                                <td>{{ i.TollID.RouteID.RouteName }}</td>
+                                                <td>{{ i.VehicleTypeID.VehicleType }}</td>
+                                                <td>{{ i.Amount }}</td>
+                                                <td><button type="submit" class="btn btn-dark"  data-toggle="modal" data-target="#editcharge" onclick="editChargenow({{ i.id }})" >Edit</button> </td>
+                                                <td><button type="submit" class="btn btn-dark" onclick="window.location.href='{% url 'AdminDashboard:adminDeleteCharge' i.id %}'">Delete</button> </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Add Charges</h4>
+                                <div class="basic-form">
+                                    <form method="post" action ="{% url 'AdminDashboard:adminSetCharge' %}">
+                                        {% csrf_token %}
+                                                <label>Vehicle Type</label>
+                                                <select name="vehtype" required class="form-control input-rounded">
+                                                    <option disabled selected value>--select--</option>
+                                                    {% for i in vtype %}
+                                                      <option value="{{ i.VehicleType }}">{{ i.VehicleType }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                    <br>
+                                                <label>TollBooth</label>
+                                                <select name="tollnam" required class="form-control input-rounded">
+                                                    <option disabled selected value>--select--</option>
+                                                    {% for i in stoll %}
+                                                      <option value="{{ i.TollName }}">{{ i.TollName }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                    <br>
+                                                <label>Amount</label>
+                                                <input type="text" class="form-control input-rounded" name="amount" placeholder="Amount" required>
+                                    <br>
+                                        <button type="submit" class="btn btn-dark">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+      <div class="modal fade bd-example-modal-sm" id="editcharge" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Update Charges</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                <form method="post" id="formchargesubmit">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="id" id="editchargeid" value="">
+                                                    <select name="vtype" id="vtypename" required class="form-control input-rounded">
+                                                    {% for i in vtype %}
+                                                      <option value="{{ i.VehicleType }}">{{ i.VehicleType }}</option>
+                                                    {% endfor %}
+                                                    </select>
+                                                <br>
+                                                     <select name="booth" id="tbooth" required class="form-control input-rounded">
+                                                    {% for i in stoll %}
+                                                      <option value="{{ i.TollName }}">{{ i.TollName }}</option>
+                                                    {% endfor %}
+                                                    </select>
+                                                        <br>
+                                                <input type="text" name="amnt" id="amount"  placeholder="Amount" value="" class="form-control input-rounded" required>
+                                                    <br>
+                                                        <br>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-dark">Submit</button>
+                                                    </div>
+                                                 </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+    <script>
+    function editChargenow(id) {
+        $.ajax({
+            url: '/admindash/EditCharges/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                cid = data['Id'];
+                vtype = data['VehicleTypeID'];
+                tolid = data['TollID'];
+                amnt = data['Amount'];
+                $("#editcharge").modal('show');
+                $("#editchargeid").val(cid);
+                $("#vtypename").val(vtype);
+                $("#tbooth").val(tolid);
+                $("#amount").val(amnt);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    $(document).on('submit', '#formchargesubmit',function(e){
+    $.ajax({
+        type:'POST',
+        url:'{% url 'AdminDashboard:adminUpdateCharge' %}',
+        data:{
+            id:$("#editchargeid").val(),
+            VehicleTypeID:$("#vtypename").val(),
+            TollID:$("#tbooth").val(),
+            Amount:$("#amount").val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            action: 'post'
+        },
+        success:function(message){
+            if(message['error']) {
+                $("#editcharge").modal('hide');
+                location.reload();
+            }
+        }
+    });
+    });
+
+    </script>
+{% endblock %}

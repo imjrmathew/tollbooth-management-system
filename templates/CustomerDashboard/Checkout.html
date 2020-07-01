@@ -1,0 +1,127 @@
+{% extends "CustomerDashboard/customerBase.html" %}
+{% block body_block %}
+{% load static %}
+
+    <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'CustomerDashboard:CustomerIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'CustomerDashboard:Booking' %}">Booking</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Checkout</a></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 card" style="padding:50px;">
+                                        <h4><strong>Details for OrderID# {{ orderid }}</strong></h4><br>
+                                        {{ temp.FirstName }}<br>
+                                        {{ temp.Phone }}<br>
+                                        {{ temp.Email }}<br>
+                                        <hr>
+                                        OrderID# {{ orderid }}<br><br>
+                                        {{ content.VehicleID.VehicleRegNum }}<br>
+                                        {{ content.TollID.TollName }}<br>
+                                        {{ content.TollID.RouteID.SourceLoc.CityName }} - {{ content.TollID.RouteID.DestinationLoc.CityName }}<br>
+                                        {{ content.DateBooked}} {{ content.TimeBooked }}<br>
+                                        {{ content.DateExpired }} {{ content.TimeExpired }}<br>
+                                        <br>
+                                        <br>
+                                        <h4><span style="color: rgba(246,82,73,0.93);font-weight: bold">Total Amount:</span> Rs. {{ content.AmountID.Amount }}</h4>
+                                    </div>
+                                    <div class="col-md-6 card" style="padding:50px;">
+                                        <h4 class="text-center"><strong>You can pay using:</strong></h4>
+                                        <br><br>
+                                        <div class="text-center">
+                                            <img src="{% static 'customer/icons/credit-card.svg' %}" class="rounded" style="height: 45%; width:45%;">
+                                        </div>
+                                        <br><br>
+                                        <div id="paypal-button-container"></div>
+                                        <script src="https://www.paypal.com/sdk/js?client-id=CLIENT ID_&currency=INR"></script>
+
+                                        <script>
+                                            paypal.Buttons({
+
+                                                style: {
+                                                    color:  'gold',
+                                                    size: 'responsive',
+                                                    },
+
+                                                // Set up the transaction
+                                                createOrder: function(data, actions) {
+                                                    return actions.order.create({
+                                                        purchase_units: [{
+                                                            amount: {
+                                                                value: '{{ content.AmountID.Amount }}'
+                                                            }
+                                                        }]
+                                                    });
+                                                },
+
+                                                // Finalize the transaction
+                                                onApprove: function(data, actions) {
+                                                    return actions.order.capture().then(function(details) {
+                                                        // Show a success message to the buyer
+                                                        {#alert('Transaction completed by {{ temp.FirstName }} !');#}
+                                                        $("#payment").modal({
+                                                            backdrop: 'static',
+                                                            keyboard: false,
+                                                        })
+
+                                                    });
+                                                }
+
+
+                                            }).render('#paypal-button-container');
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+     <div class="modal fade bd-example-modal-sm" id="payment" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border: none">
+                <div class="modal-header" style="background-color: #CBE558;">
+                    <h5 class="modal-title" style="color: rgba(6,6,6,0.93);"><strong>Payment Status</strong></h5>
+
+                </div>
+                <div class="modal-body">
+                <form method="post" id="formpaymentsubmit" name="formpaymentsubmit" action="{% url 'CustomerDashboard:Checkout' %}">
+                    {% csrf_token %}
+                    <h4 class="text-center">Your payment is successfull</h4>
+                    <div class="text-center">
+                        <small>BookingID# {{ orderid }}</small>
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <img src="{% static 'customer/icons/tick.svg' %}" style="width: 100px; height:100px">
+                    </div>
+                    <input type="hidden" name="loginid" id="loginid" value="{{ content.loginid.pk }}">
+                    <input type="hidden" name="tollid" id="tollid" value="{{ content.TollID.pk }}">
+                    <input type="hidden" name="datebooked" id="datebooked" value="{{ content.DateBooked }}">
+                    <input type="hidden" name="dateexpired" id="dateexpired" value="{{ content.DateExpired }}">
+                    <input type="hidden" name="vehicleid" id="vehicleid" value="{{ content.VehicleID.pk }}">
+                    <input type="hidden" name="amountid" id="amountid" value="{{ content.AmountID.pk }}">
+                        <br>
+                        <br>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn" style="color: rgba(6,6,6,0.93); background-color: #CBE558;"><strong><span class="fas fa-check" style="padding-right: 10px;"></span>Okay</strong></button>
+                    </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

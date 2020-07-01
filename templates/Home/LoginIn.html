@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% extends "Home/base2.html" %}
+{% block body_block %}
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+    <link rel="stylesheet" href="{% static 'modal/modal_files/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'modal/modal_files/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'modal/modal_files/bootstrap.css' %}">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="{% static 'modal/modal_files/pe-icon-7-stroke.css' %}">
+    <link rel="stylesheet" href="{% static 'modal/modal_files/helper.css' %}">
+    <link rel="stylesheet" href="{% static 'modal/modal_files/style.css' %}">
+    <link rel="stylesheet" href="{% static 'modal/modal_files/style(1).css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <div class="page-links">
+        <a href="/login" class="active">Login</a><a href="/register">Register</a><a href="/">Home</a>
+    </div>
+<form method="POST">
+                        {{formL}}
+                        {% csrf_token %}
+    <div class="form-button">
+        <button id="submit" type="submit" class="ibtn">Login</button>
+        <a href="#" data-toggle="modal" data-target="#myModal2">Forget password?</a>
+    </div>
+    <label style="color: #ff6267; font-weight: bold;">
+        {% if error %}
+        {{error}}
+        {% endif %}
+    </label>
+</form>
+<div class="other-links">
+    <span>Or register with</span><a href="{% provider_login_url "google" %}">Google</a>
+</div>
+
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header text-center">
+                                                <h4 class="modal-title">Forget Password ?</h4>
+                                                <small>TollBooth Management System</small>
+                                            </div>
+                                        
+                                            <div class="modal-body">
+                                                <div class="text-center">
+                                                    <img src={% static '/log/boy.svg' %} alt="image" style="width: 100px; height:100px;">
+                                                </div><br>
+                                                <form method="post" action="/Forget">
+                                                    <input type="text" name="username"  placeholder="Username" class="form-control" id="type" required>
+                                                    <label>We won't share your credentials online</label>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" id="clik" class="btn btn-accent">Sent</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+    <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header text-center">
+                                                <h4 class="modal-title">Forget Password ?</h4>
+                                                <small>TollBooth Management System</small>
+                                            </div>
+                                            <form method="post" action="{% url 'forget' %}">
+                                                {% csrf_token %}
+                                            <div class="modal-body" style="height: 300px;">
+                                                <div class="text-center">
+                                                    <img src={% static '/log/interface.svg' %} alt="image" style="width: 100px; height:100px;">
+                                                </div>
+                                                <div class="text-center">
+                                                    <h6>Hi, <span class="usern" style="font-weight: bold;color: #417bb8;"></span> we have sent your password to your mail.</h6>
+                                                </div>
+                                                <input type="text" hidden value="" name="unames" class="mytext">
+                                            </div>
+                                            <div class="modal-footer" style="position: absolute;bottom: 0px;width: 100%;">
+                                                <button type="submit" class="btn btn-default" id="cilkme">Okay</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+<script src="{% static 'modal/modal_files/pace.min.js.download' %}"></script>
+<script src="{% static 'modal/modal_files/jquery.min.js.download' %}"></script>
+<script src="{% static 'modal/modal_files/bootstrap.min.js.download' %}"></script>
+
+<!-- App scripts -->
+<script src="{% static 'modal/modal_files/luna.js.download' %}"></script>
+<script>
+    $(document).ready(function(){
+  $("#clik").click(function(){
+    val = $("#type").val()
+      $("#myModal2").modal("hide");
+      $(".usern").html(val)
+      $(".mytext").val(val)
+      $("#myModal3").modal("show");
+      $("#clikme").click(function () {
+          $("#myModal3").modal("hide");
+      })
+  });
+});
+</script>
+{% endblock %}

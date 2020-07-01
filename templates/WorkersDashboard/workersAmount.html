@@ -1,0 +1,57 @@
+{% extends "WorkersDashboard/workersBase.html" %}
+{% block body_block %}
+{% load static %}
+
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'WorkersDashboard:workersIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Set Charges</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Amount</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>TollBooth</th>
+                                                <th>Route</th>
+                                                <th>Source Location</th>
+                                                <th>Destination Location</th>
+                                                <th>Vehicle Type</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in charge %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ i.TollID.TollName }}</td>
+                                                <td>{{ i.TollID.RouteID.RouteName }}</td>
+                                                <td>{{ i.TollID.RouteID.SourceLoc.CityName }}</td>
+                                                <td>{{ i.TollID.RouteID.DestinationLoc.CityName }}</td>
+                                                <td>{{ i.VehicleTypeID.VehicleType }}</td>
+                                                <td>{{ i.Amount }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

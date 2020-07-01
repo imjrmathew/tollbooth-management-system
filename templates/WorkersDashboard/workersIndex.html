@@ -1,0 +1,115 @@
+{% extends 'WorkersDashboard/workersBase.html' %}
+{% block body_block %}
+{% load static %}
+            <div class="content-body">
+
+            <div class="container-fluid mt-3">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card gradient-1">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">Registered Workers</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">{{ noofworkers }}</h2>
+                                    <p class="text-white mb-0">Updated: {{ datetime | date:"M d" }}</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fas fa-users-cog"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6" onclick="window.location.href='{% url 'WorkersDashboard:workersWorkersList' %}'">
+                        <div class="card gradient-2">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">Workers in {{ routename }}</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">{{ noofworkersrt }}</h2>
+                                    <p class="text-white mb-0">Updated: {{ datetime | date:"M d" }}</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fa fa-users"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6" onclick="window.location.href='{% url 'WorkersDashboard:workersListTollBooth' %}'">
+                        <div class="card gradient-3">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">Registered TollBooths</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">{{ noofbooths }}</h2>
+                                    <p class="text-white mb-0">Updated: {{ datetime | date:"M d" }}</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fas fa-registered"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6" onclick="window.location.href='{% url 'WorkersDashboard:workersListBooking' %}'">
+                        <div class="card gradient-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-white">Booking</h3>
+                                <div class="d-inline-block">
+                                    <h2 class="text-white">{{ noofbooking }}</h2>
+                                    <p class="text-white mb-0">Updated: {{ datetime | date:"M d" }}</p>
+                                </div>
+                                <span class="float-right display-5 opacity-5"><i class="fa fa-bookmark"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Booking History</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead >
+                                            <tr>
+                                                <th>#</th>
+                                                <th>First Name</th>
+                                                <th>Mobile</th>
+                                                <th>Email</th>
+                                                <th>Register No</th>
+                                                <th>TollBooth</th>
+                                                <th>Amount</th>
+                                                <th>Booked On</th>
+                                                <th>Expired On</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in bookobj %}
+                                            <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            {% for j in newuserobj %}
+                                            {% if i.loginid == j.loginid %}
+                                            <td>{{ j.FirstName }}</td>
+                                            <td>{{j.Phone }}</td>
+                                            <td>{{ j.Email }}</td>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <td>{{ i.VehicleID.VehicleRegNum }}</td>
+                                            <td>{{ i.TollID.TollName }}</td>
+                                            <td>{{ i.AmountID.Amount }}</td>
+                                            <td>{{ i.DateBooked }} {{ i.TimeBooked }}</td>
+                                            <td>{{ i.DateExpired }} {{ i.TimeExpired }}</td>
+                                                {% if i.isExpired == True and i.isCanceled == False and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-danger" style="font-weight: bold;">Expired</td>
+                                                {% elif i.isExpired == False and i.isCanceled == False and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-info" style="font-weight: bold;">Active</td>
+                                                {% elif i.isCanceled == True and i.isExpired == True and i.VehicleID.isdeleted == False %}
+                                                    <td class="text-danger" style="font-weight: bold;">Canceled</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- #/ container -->
+        </div>
+{% endblock %}

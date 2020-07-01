@@ -1,0 +1,326 @@
+{% extends 'CustomerDashboard/customerBase.html' %}
+{% block body_block %}
+{% load static %}
+
+    <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'CustomerDashboard:CustomerIndex' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Booking History</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Your Booking<span>
+                                </span></h4>
+
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered zero-configuration">
+                                        <thead >
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Register No</th>
+                                                <th>TollBooth</th>
+                                                <th>Source Location</th>
+                                                <th>Destination Location</th>
+                                                <th>Amount</th>
+                                                <th>Booked On</th>
+                                                <th>Expired On</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in bookobj %}
+                                            <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ i.VehicleID.VehicleRegNum }}</td>
+                                            <td>{{ i.TollID.TollName }}</td>
+                                            <td>{{ i.TollID.RouteID.SourceLoc.CityName }}</td>
+                                            <td>{{ i.TollID.RouteID.DestinationLoc.CityName }}</td>
+                                            <td>{{ i.AmountID.Amount }}</td>
+                                            <td>{{ i.DateBooked }} {{ i.TimeBooked }}</td>
+                                            <td>{{ i.DateExpired }} {{ i.TimeExpired }}</td>
+
+                                                {% if i.isExpired == True %}
+                                                    <td class="text-danger" style="font-weight: bold;">Expired</td>
+                                                    <td><button disabled class="btn btn-facebook" type="submit"><span class="fas fa-edit"></span></button></td>
+                                                    <td><button disabled class="btn btn-reddit" type="submit"><span class="fa fa-ban"></span></button></td>
+                                                {% elif i.isExpired == False %}
+                                                    <td class="text-info" style="font-weight: bold;">Active</td>
+                                                    <td><button class="btn btn-facebook" type="submit" data-toggle="modal" data-target="#editbooking" onclick="editBooking({{ i.id }})"><span class="fas fa-edit"></span></button></td>
+                                                    <td><button class="btn btn-reddit" type="submit" data-toggle="modal" data-target="#cancelbooking" onclick="cancelBooking({{ i.id }})"><span class="fa fa-ban"></span></button></td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+
+
+
+    <div class="modal fade bd-example-modal-sm" id="editbooking" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #3b5998;">
+                    <h5 class="modal-title" style="color: white">Update Booking</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span style="color: white;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <form method="post" id="formsubmitbooking" action="{% url 'CustomerDashboard:UpdateBooking' %}">
+                    {% csrf_token %}
+                        <div class="row">
+                            <input type="hidden" name="mebookid" id="bookidme" value="">
+                            <div class="col-md-6">
+                                <label>Name</label>
+                                <input disabled type="text" class="form-control input-rounded" name="firstname" placeholder="Name" value="{{ details.FirstName }}"  required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Phone</label>
+                                <input disabled type="text" class="form-control input-rounded" name="mobile" placeholder="Mobile" value="{{ details.Phone }}"  required>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-md-6">
+                            <label>Register No</label>
+                            <select name="registerno" required class="form-control input-rounded" id="regme" onchange="getVtype()">
+                                <option disabled selected value>--select--</option>
+                                {% for i in regdetails %}
+                                  <option id="{{ i.id }}" value="{{ i.VehicleRegNum }}">{{ i.VehicleRegNum }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                        <input type="hidden" name="meid" id="idme" value="">
+                        <input type="hidden" name="mevtid" id="idvtme" value="">
+                            <label>Vehicle Type</label>
+                            <select name="vtype" required class="form-control input-rounded" disabled id="vtypeme">
+                                <option disabled selected value>--select--</option>
+                                {% for i in vehdetails %}
+                                  <option value="{{ i.VehicleType }}" >{{ i.VehicleType }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-md-4">
+                            <label>Toll Booth</label>
+                            <select name="tollname" required class="form-control input-rounded" id="tolltype" onchange="getTolltype()">
+                                <option disabled selected value>--select--</option>
+                                {% for i in toll %}
+                                  <option id="{{ i.id }} " value="{{ i.TollName }}" >{{ i.TollName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                        <input type="hidden" name="mtid" id="tidme" value="">
+                        <input type="hidden" name="merouteid" id="routeidme" value="">
+                            <label>Source Location</label>
+                            <select name="sloc" required class="form-control input-rounded" disabled id="slocme">
+                                <option disabled selected value>--select--</option>
+                                {% for i in location %}
+                                  <option value="{{ i.RouteID.SourceLoc.CityName }}">{{ i.RouteID.SourceLoc.CityName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Destination Location</label>
+                            <select  name="dloc" required class="form-control input-rounded" id="dlocme" disabled>
+                                <option disabled selected value>--select--</option>
+                                {% for i in location %}
+                                  <option value="{{ i.RouteID.DestinationLoc.CityName }}" >{{ i.RouteID.DestinationLoc.CityName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                        <div class="col-md-4">
+                            <label>Amount</label>
+                            <input disabled type="text" class="form-control input-rounded" name="amounts" id="amnt" placeholder="0.00" value=""  required>
+                            <small id="visible" hidden style="font-weight: bold;color:rgba(220,65,59,0.85)"></small>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Booked On</label>
+                            <input type="date" class="form-control input-rounded" name="datebooked" id="dtbk" placeholder="DD/MM/YYYY" value=""  min='{{ dates }}' required onchange="getExpiryDate()">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="hidden" name="menowdate" id="nowdateme" value="">
+                            <input type="hidden" name="menowexdate" id="nowexdateme" value="">
+                            <label>Expired On</label>
+                            <input disabled type="date" class="form-control input-rounded" name="dateexpired" id="dtexp" value="" required>
+                        </div>
+                        </div>
+
+                        <br>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-facebook btn-rounded" style="width:300px;"><span class="fas fa-check" style="padding-right: 10px;"> </span>Update</button>
+                    </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade bd-example-modal-sm" id="cancelbooking" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="border: none">
+                <div class="modal-header" style="background-color: rgba(246,70,54,0.93);border-color: white;">
+                    <h5 class="modal-title" style="color: white">Cancel Booking</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span style="color: white;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: rgba(246,70,54,0.93);">
+                    <form action="{% url 'CustomerDashboard:CancelBooking' %}" method="post">
+                        {% csrf_token %}
+                    <input type="hidden" name="deleteidme" id="medeleteid" value="">
+                    <h6 class="text-center" style="color: white"><strong>Do you want to cancel this booking?</strong></h6>
+                    <div class="text-center">
+                        <img src="{% static 'customer/icons/recycling-bin (2).svg' %}" alt="null" style="height: 45%; width: 45%">
+                    </div>
+                    <div class="modal-footer" style="border: none">
+                            <button type="submit" class="btn btn-rounded btn-dark" style="width: 200%;"><span class="fa fa-ban" style="padding-right: 10px;"> </span>Cancel</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    function editBooking(id) {
+     $.ajax({
+            url: '/Customers/EditBooking/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                ID = data['ID'];
+                rno = data['rno'];
+                rnoid = data['rnoid'];
+                vtype = data['vtype'];
+                vtypeid = data['vtypeid'];
+                tbooth = data['tbooth'];
+                tboothid = data['tboothid'];
+                routeid = data['routeid'];
+                sloc = data['sloc'];
+                dloc = data['dloc'];
+                amount = data['amount'];
+                datebooked = data['datebooked'];
+                dateexpired = data['dateexpired'];
+                $("#editbooking").modal('show');
+                $("#bookidme").val(ID);
+                $("#regme").val(rno);
+                $("#idme").val(rnoid);
+                $("#idvtme").val(vtypeid);
+                $("#vtypeme").val(vtype);
+                $("#tolltype").val(tbooth);
+                $("#tidme").val(tboothid);
+                $("#routeidme").val(routeid);
+                $("#slocme").val(sloc);
+                $("#dlocme").val(dloc);
+                $("#amnt").val(amount);
+                $("#dtbk").val(datebooked);
+                $("#nowdateme").val(datebooked);
+                $("#nowexdateme").val(dateexpired);
+                $("#dtexp").val(dateexpired);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+   function cancelBooking(id) {
+        $("#medeleteid").val(id)
+   }
+
+    function getVtype() {
+        var id = $("#regme").children(":selected").attr("id");
+        $.ajax({
+            url: '/Customers/GetRegValue/'+id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                vid = data['Id'];
+                vtid = data['tid'];
+                vtype = data['VehicleType'];
+                $("#idme").val(vid);
+                $("#idvtme").val(vtid);
+                $("#vtypeme").val(vtype);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    function getTolltype() {
+        var ids = $("#tolltype").children(":selected").attr("id");
+        var vid = $("#idvtme").val();
+        var values = [ids, vid];
+        var jsontext = JSON.stringify(values);
+        $.ajax({
+            url: '/Customers/GetTollValue/'+jsontext,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                tid = data['Id'];
+                routeid = data['routeid'];
+                SourceLoc = data['SourceLoc'];
+                DestinationLoc = data['DestinationLoc'];
+                Amount = data['Amount'];
+                $("#tidme").val(tid);
+                $("#routeidme").val(routeid);
+                $("#slocme").val(SourceLoc);
+                $("#dlocme").val(DestinationLoc);
+                $("#amnt").val(Amount);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+
+    function getExpiryDate() {
+        var date = $("#dtbk").val();
+        var jsontext = JSON.stringify(date)
+        $.ajax({
+            url: '/Customers/GetExpiry/'+jsontext,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                currentdate = data['currentdate'];
+                expirydate = data['expirydate'];
+                $("#nowdateme").val(currentdate);
+                $("#nowexdateme").val(expirydate);
+                $("#dtexp").val(expirydate);
+            },
+            failure: function () {
+                alert("Failed")
+            }
+        });
+    }
+    </script>
+{% endblock %}

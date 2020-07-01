@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% extends "Home/base2.html" %}
+{% block body_block %}
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+    <div class="page-links">
+        <a href="/login">Login</a><a href="/tollregister" class="active">Register</a><a href="/">Home</a>
+    </div>
+    <h6 class="errorlist">{{ number }}</h6>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %} 
+    {{ formL }}
+    {{ formR }}
+    <label for="tollname">Select TollBooth:</label>
+    <select name="tollname" id="tollname" required class="form-control input-rounded">
+      <option value selected disbaled>Choose A TollBooth</option>
+    {% for i in toll %}
+      <option value="{{ i.TollName }}">{{ i.TollName }}</option>
+    {% endfor %}
+    </select>
+    <div class="form-button">
+        <button id="submit" type="submit" class="ibtn">Register</button>
+    </div>
+</form>
+{% endblock %}
