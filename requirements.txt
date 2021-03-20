@@ -50,7 +50,7 @@ hyperlink==19.0.0
 idna==2.7
 incremental==17.5.0
 itsdangerous==1.1.0
-Jinja2==2.11.1
+Jinja2==2.11.3
 jmespath==0.9.5
 joblib==0.15.1
 jws==0.1.3
